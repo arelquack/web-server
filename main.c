@@ -11,6 +11,7 @@ int main() {
     int server_fd;
     struct sockaddr_in address;
     int opt = 1;
+    int addrlen = sizeof(address);
 
     /*
         Author    : Arel
@@ -22,7 +23,7 @@ int main() {
         perror("Socket failed");
         exit(EXIT_FAILURE);
     }
-    printf("Socket has been created.\n");
+    printf("Socket has been successfully created.\n");
 
     /*
         Author    : Arel
@@ -47,7 +48,33 @@ int main() {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
-    printf("Socket config has been done :D.\n");
+    /*
+        Author    : Arel
+        Deskripsi :
+        Mengikat (bind) socket ke alamat dan port yang telah dikonfigurasi sebelumnya.
+        Hal ini memastikan server dapat menerima koneksi di port 8080.
+        Jika gagal, program akan keluar dengan status error.
+        
+    */
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+        perror("Binding failed");
+        exit(EXIT_FAILURE);
+    }
+    printf("Socket has been successfully binded to port %d.\n", PORT);
+
+    /*
+        Author    : Arel
+        Deskripsi :
+        Mengubah socket ke mode mendengarkan (listening) untuk menerima koneksi masuk.
+        Parameter kedua (10) menentukan jumlah koneksi yang bisa diantrekan.
+        Jika gagal, program akan keluar dengan status error.
+        
+    */
+    if (listen(server_fd, 10) < 0) {
+        perror("Listening failed.");
+        exit(EXIT_FAILURE);
+    }
+    printf("Server is listening on port %d.\n", PORT);
 
     return 0;
 }
