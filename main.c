@@ -4,61 +4,50 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+// Define port-nya dulu bos :D
 #define PORT 8080
-#define BUFFER_SIZE 1024
 
 int main() {
-    int server_fd, new_socket;
+    int server_fd;
     struct sockaddr_in address;
-    int addrlen = sizeof(address);
-    char buffer[BUFFER_SIZE] = {0};
-    const char *response =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/html\r\n"
-        "Content-Length: 45\r\n"
-        "\r\n"
-        "<html><body><h1>Ohayou Sekai!</h1></body></html>";
+    int opt = 1;
 
-        // Bikin socket
-        if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-            perror("Socket failure");
-            exit(EXIT_FAILURE);
-        }
+    /*
+        Author    : Arel
+        Deskripsi :
+        Membuat socket menggunakan protokol TCP/IP (SOCK_STREAM).
+        Jika gagal, program akan keluar dengan status error.
+    */
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror("Socket failed");
+        exit(EXIT_FAILURE);
+    }
+    printf("Socket has been created.\n");
 
-        // Konfigurasi alamat server
-        address.sin_family = AF_INET;
-        address.sin_addr.s_addr = INADDR_ANY;
-        address.sin_port = htons(PORT);
+    /*
+        Author    : Arel
+        Deskripsi :
+        Mengatur opsi pada socket agar dapat menggunakan kembali alamat/port.
+        Ini berguna untuk menghindari "address already in use" saat restart server.
+    */
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
+        perror("Set socket options failed");
+        exit(EXIT_FAILURE);
+    }
 
-        // Bind socket ke alamat
-        if(bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
-            perror("Bind failure");
-            close(server_fd);
-            exit(EXIT_FAILURE);
-        }
+    /*
+        Author    : Arel
+        Deskripsi :
+        Mengonfigurasi properti socket:
+        - Keluarga alamat: IPv4 (AF_INET)
+        - Alamat IP: INADDR_ANY (menerima koneksi dari semua antarmuka jaringan)
+        - Port: 8080
+    */
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(PORT);
 
-        // Listen koneksi
-        if(listen(server_fd, 3) < 0) {
-            perror("Listen failure");
-            close(server_fd);
-            exit(EXIT_FAILURE);
-        }
-        printf("Server is running on http://localhost:%d\n", PORT);
+    printf("Socket config has been done :D.\n");
 
-        // Terima koneksi klien
-        if((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
-            perror("Accept failure");
-            close(server_fd);
-            exit(EXIT_FAILURE);
-        }
-
-        // Baca request dan kirim response
-        read(new_socket, buffer, BUFFER_SIZE);
-        printf("Request received: \n%s\n", buffer);
-        write(new_socket, response, strlen(response));
-
-        // Tutup koneksi
-        close(new_socket);
-        close(server_fd);
-        return 0;
+    return 0;
 }
