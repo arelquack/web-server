@@ -12,6 +12,7 @@ int main() {
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
+    int new_socket;
 
     /*
         Author    : Arel
@@ -75,6 +76,19 @@ int main() {
         exit(EXIT_FAILURE);
     }
     printf("Server is listening on port %d.\n", PORT);
+
+    /*
+        Author    : Dzak
+        Deskripsi :
+        Menerima koneksi dari klien. Fungsi accept akan memblokir hingga koneksi masuk diterima.
+        Jika gagal, program akan keluar dengan status error.
+        
+    */
+    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+        perror("Accepting connection failed.");
+        exit(EXIT_FAILURE);
+    }
+    printf("Connection accepted from client.\n");
 
     return 0;
 }
