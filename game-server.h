@@ -1,5 +1,5 @@
 /*
-    Author    : Arel
+    Author    : Dzak
     Deskripsi : Header file untuk server permainan tebak angka
                 Berisi deklarasi fungsi dan variabel global yang digunakan
                 untuk mengelola game server, komunikasi antar pemain, dan pengaturan shared memory.
