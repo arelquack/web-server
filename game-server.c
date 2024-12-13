@@ -79,11 +79,11 @@ void handle_client(int client_socket, int player_index) {
                 shared_data[2] = 0; // `shared_data[2]` menandakan status game aktif
                 exit(EXIT_SUCCESS);
             } else if (guess < secret_number) {
-                sprintf(message, "%s: Salah! Angka terlalu kecil.\n", player_names[player_index]);
+                sprintf(message, "Salah! Angka terlalu kecil.\n");
             } else {
-                sprintf(message, "%s: Salah! Angka terlalu besar.\n", player_names[player_index]);
+                sprintf(message, "Salah! Angka terlalu besar.\n");
             }
-            broadcast(message);
+            send(client_socket, message, strlen(message), 0);
 
             // Update giliran pemain berikutnya
             shared_data[0] = (shared_data[0] + 1) % shared_data[1];
