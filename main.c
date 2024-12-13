@@ -6,16 +6,25 @@
                 mengelola permainan, dan mengatur shared memory.
                 Server menunggu pemain untuk bergabung dan mengelola giliran.
 */
+
+void sigchld_handler(int s) {
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+}
+
 int main() {
     struct sockaddr_in address;
     int addrlen = sizeof(address);
     int max_players;
 
     signal(SIGINT, cleanup); // Tangkap Ctrl+C untuk pembersihan
+    signal(SIGCHLD, sigchld_handler); // Tangani proses zombie
 
     printf("=== MENU SERVER ===\n");
     printf("Masukkan jumlah pemain (2-10): ");
-    scanf("%d", &max_players);
+    if (scanf("%d", &max_players) != 1) {
+        printf("Input tidak valid! Harus berupa angka.\n");
+        exit(EXIT_FAILURE);
+    }
     if (max_players < 2 || max_players > MAX_PLAYERS) {
         printf("Jumlah pemain tidak valid! Harus antara 2 hingga 10.\n");
         exit(EXIT_FAILURE);
@@ -53,6 +62,7 @@ int main() {
     }
 
     printf("Server Tebak Angka siap di port %d\n", PORT);
+    srand(time(NULL));
     secret_number = rand() % 100 + 1;  // Angka rahasia yang harus ditebak
     printf("Angka rahasia: %d\n", secret_number);
 

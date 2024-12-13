@@ -58,7 +58,12 @@ void handle_client(int client_socket, int player_index) {
             }
 
             buffer[valread - 1] = '\0'; // Hilangkan newline
-            int guess = atoi(buffer);
+            int guess;
+            if (sscanf(buffer, "%d", &guess) != 1) {
+                sprintf(message, "%s: Input tidak valid! Harus berupa angka.\n", player_names[player_index]);
+                send(client_socket, message, strlen(message), 0);
+                continue;
+            }
             printf("%s menebak: %d\n", player_names[player_index], guess);
 
             // Memeriksa tebakan pemain
