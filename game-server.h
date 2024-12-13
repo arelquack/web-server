@@ -17,7 +17,7 @@
 #include <sys/ipc.h> // Untuk shmget dan IPC_PRIVATE
 #include <sys/shm.h> // Untuk shmget, shmat, shmctl
 #include <sys/wait.h> 
-
+#include <time.h>
 
 #define PORT 1234                // Port yang digunakan oleh server
 #define BUFFER_SIZE 1024         // Ukuran buffer untuk komunikasi antar klien

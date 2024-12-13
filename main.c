@@ -62,6 +62,7 @@ int main() {
     }
 
     printf("Server Tebak Angka siap di port %d\n", PORT);
+    srand(time(NULL));
     secret_number = rand() % 100 + 1;  // Angka rahasia yang harus ditebak
     printf("Angka rahasia: %d\n", secret_number);
 
