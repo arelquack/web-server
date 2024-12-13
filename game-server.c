@@ -44,6 +44,12 @@ void handle_client(int client_socket, int player_index) {
     sprintf(message, "Selamat datang, %s! Tunggu giliran Anda.\n", player_names[player_index]);
     send(client_socket, message, strlen(message), 0);
 
+    // Tunggu hingga ada lebih dari satu pemain yang terhubung
+    while (shared_data[1] < 2) {
+        send(client_socket, "Menunggu pemain lain untuk terhubung...\n", 40, 0);
+        sleep(1);
+    }
+
     while (1) {
         if (shared_data[0] == player_index) { // `shared_data[0]` adalah giliran aktif
             sprintf(message, "Giliran %s sekarang. Tebak angka: ", player_names[player_index]);
