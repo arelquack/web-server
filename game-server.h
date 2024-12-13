@@ -16,6 +16,7 @@
 #include <signal.h>  // Untuk signal dan SIGINT
 #include <sys/ipc.h> // Untuk shmget dan IPC_PRIVATE
 #include <sys/shm.h> // Untuk shmget, shmat, shmctl
+#include <sys/wait.h> 
 
 
 #define PORT 1234                // Port yang digunakan oleh server
